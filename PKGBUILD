@@ -27,6 +27,14 @@
 # Contributor: xgdgsc <xgdgsc @t gmail dot com>
 # Contributor: mynacol <dc07d át mynacol dót xyz>
 
+_os="$( \
+  uname \
+    -o)"
+if [[ "${_os}" == "Android" ]]; then
+  _libc="ndk-sysroot"
+elif [[ "${_os}" == "Android" ]]; then
+  _libc="gcc-libs"
+fi
 pkgname=android-sdk-build-tools
 # _ver="$( \
 #   cat \
@@ -61,7 +69,7 @@ license=(
   'custom'
 )
 depends=(
-  'gcc-libs'
+  "${_libc}"
   'zlib'
   'bash'
 )
