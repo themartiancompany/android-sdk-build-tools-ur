@@ -95,19 +95,48 @@ options=(
   '!strip'
 )
 
+_root_get() {
+  local \
+    _bin \
+    _env \
+    _root \
+    _usr
+  _env="$( \
+    command \
+      -v \
+      "env")"
+  _bin="$( \
+    dirname \
+      "${_env}")"
+  _usr="$( \
+    dirname \
+      "${_bin}")"
+  _root="$( \
+    dirname \
+      "${_usr}")"
+  if [[ "${_root}" == "/" ]]; then
+    _root=""
+  fi
+  echo \
+    "${_root}"
+}
+
 package() {
   local \
     _binaries=() \
     _f \
-    _target
+    _target \
+    _root
+  _root="$( \
+    _root_get)"
   cd \
-    "$pkgdir"
+    "${pkgdir}"
   install \
     -d \
     "usr/share/licenses/${pkgname}/"
   ln \
     -s \
-    "/opt/${_sdk}/build-tools/${_ver}/NOTICE.txt" \
+    "${_root}/opt/${_sdk}/build-tools/${_ver}/NOTICE.txt" \
     "usr/share/licenses/${pkgname}/NOTICE.txt"
   sed \
     -i \
@@ -123,7 +152,7 @@ package() {
     "opt/${_sdk}/build-tools/${_ver}/package.xml"
   ln \
     -s \
-    "/opt/${_sdk}/build-tools/${_ver}/package.xml" \
+    "${_root}/opt/${_sdk}/build-tools/${_ver}/package.xml" \
     "usr/share/licenses/${pkgname}/package.xml"
   _target="opt/${_sdk}/build-tools/${_ver}"
   mkdir \
@@ -160,7 +189,7 @@ package() {
   for _f in ${_binaries[@]}; do
     ln \
       -s \
-      "/${_target}/${_f}" \
+      "${_root}/${_target}/${_f}" \
       "usr/bin/${_f}"
   done
 }
