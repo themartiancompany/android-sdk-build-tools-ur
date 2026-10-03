@@ -46,7 +46,8 @@ elif [[ "${_os}" == "Android" ]]; then
   _libc="gcc-libs"
   _libcompiler="libgcc"
 fi
-_sdk=android-sdk
+_proj=android
+_sdk=${_proj}-sdk
 pkgname="${_sdk}-build-tools"
 # _ver="$(
 #   cat \
@@ -60,48 +61,50 @@ if [[ "${_os}" == "GNU/Linux" ]]; then
   _minor=0
   _micro=0
   _mini=0
-  _android_ver=android-14
+  _android_ver="14"
   _displayversion=34
 elif [[ "${_os}" == "GNU/Linux" ]]; then
   _major=16
   _minor=0
   _micro=0
   _mini=4
-  _android_ver=android-14
+  _android_ver="14"
   _displayversion=34
 fi
 _ver="${_major}.${_minor}.${_micro}"
 if [[ "${_mini}" != "" ]]; then
   _ver="${_ver}.${_mini}"
 fi
-_android="android-${_android_ver}"
+_android="${_proj}-${_android_ver}"
 _ver="${_major}.${_minor}.${_micro}"
-pkgver=r34.0.0
-pkgrel=2
+pkgver="r${_ver}"
+pkgrel=3
 _pkgdesc=(
   'Build-Tools for Google Android SDK'
   '(aapt, aidl, dexdump, dx, llvm-rs-cc)'
 )
 pkgdesc="${_pkgdesc[*]}"
 arch=(
-  'x86_64'
-  'i686'
   'aarch64'
   'arm'
   'armv7l'
+  'armv8l'
+  'i686'
+  'x86_64'
 )
 url="https://developer.android.com/studio/releases/build-tools"
 # Android SDK is proprietary
 # so while The Martian Company can
 # publish a CI-compatible repository,
-# no binary packages can be distributed,
-# except than for some of the open-source components,
-# some of which are included as a split
-# package and distributed.
+# no binary packages can be distributed.
+# If you're looking for the freely
+# distributable programs in Android SDK
+# please pick them individually.
 license=(
   'custom'
 )
 depends=(
+  "abseil-cpp"
   "${_libc}"
   "${_libcompiler}"
   'bash'
@@ -111,7 +114,6 @@ depends=(
 )
 makedepends=(
   "${_compiler}"
-  "googletest"
   "protobuf"
 )
 _gtest="gtest"
@@ -215,8 +217,9 @@ optdepends=(
 provides=(
   'aapt'
   'aapt2'
+  'aidl'
 )
-_android_repo="https://dl.google.com/android/repository"
+_android_repo="https://dl.google.com/${_proj}/repository"
 source=(
   "${_android_repo}/build-tools_r${_displayversion}-linux.zip"
    "package.xml"
@@ -326,10 +329,4 @@ package() {
       "${_root}/${_target}/${_f}" \
       "usr/bin/${_f}"
   done
-}
-
-package_aapt2() {
-  ln \
-    -s
-  true
 }
