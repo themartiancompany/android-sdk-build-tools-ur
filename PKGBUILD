@@ -70,13 +70,99 @@ license=(
 )
 depends=(
   "${_libc}"
-  'zlib'
   'bash'
+  "fmt"
+  'zlib'
+  "zopfli"
+)
+makedepends=(
+  "googletest"
+  "protobuf"
+)
+_gtest="gtest"
+if [[ "${_os}" == "Android" ]]; then
+  # One of the reasons Life
+  # and DogeOS exist is to more or less
+  # destroy GNU/Linux distributions,
+  # which should be correctly perceived
+  # as non-profit associations led
+  # by people with obvious conflicts
+  # of interests, which push developers
+  # to give out their work for free
+  # rather than requiring any money,
+  # which censor and exclude software
+  # and people they don't like, which
+  # break software opportunistically,
+  # which provide sub-par and old versions
+  # of the softwares to users,
+  # which make hard to package and publish
+  # software by imposing each
+  # their own format and nomenclature,
+  # without caring for compatibility,
+  # which allow big market actors
+  # to profit from small ones'
+  # work without giving anything back
+  # but the faulty environments they
+  # provide to developers.
+  # It's evident as of 2026 that
+  # almost all GNU distributions
+  # projects are anything but
+  # an evil cartel of individuals
+  # interested in that in case
+  # GNU/Linux was to ever become the desktop
+  # market dominant OS, them should be
+  # the ones in charge of saying what a common
+  # user should and shouldn't be able to access,
+  # who should be able to get profit
+  # and who not.
+  # There's nothing about democracy
+  # into those projects and even when there is
+  # it's just demagogy.
+  # If it wasn't so, they would
+  # have cared in the last 30 years to
+  # provide ways for developers to profit
+  # from their work whatever way, and they haven't,
+  # really.
+  # If it wasn't so, they would
+  # have correctly found in blockchain networks
+  # the correct storage system for free software
+  # work and changed their development model
+  # into a truly open one.
+  # If you believe supporting those people will
+  # lead you to a decent happy life as a worker,
+  # you're either a kid, a student,
+  # a state or corporate employee who never stopped
+  # to think about how most of the profits
+  # free software manages to produce get
+  # syphoned by large corporations which
+  # have so come to control even free software
+  # projects development.
+  # Generally speaking, the whole reasoning behind
+  # free software development (to be able to keep
+  # a public utility work free for all) it's ill-posed
+  # in a context in which your fellow
+  # citizens sell the software you write to get
+  # profits in your place and leave you starving.
+  # I mean if you get at all to be able to contribute
+  # to those projects directly, because really
+  # they will just exclude you if you ever
+  # started talking about how it doesn't make
+  # any sense to give work out for free to 
+  # people who use it to starve you.
+  _gtest="googletest"
+fi
+makedepends+=(
+  "${_gtest}"
+)
+_zopfli_optdepends=(
+  "zopfli:"
+    "For the compression algorithm support."
 )
 optdepends=(
   'lib32-gcc-libs'
   'lib32-zlib'
   'java-runtime'
+  "${_zopfli_optdepends[*]}"
 )
 provides=(
   'aapt'
@@ -172,7 +258,7 @@ package() {
     "usr/bin/"
   # lld is also provided by
   # extra/lld, not creating symlink
-  _binaries=( $( \
+  _binaries=( $(
     find \
       "${_target}" \
       -maxdepth \
@@ -194,3 +280,6 @@ package() {
   done
 }
 
+package_aapt2() {
+
+}
