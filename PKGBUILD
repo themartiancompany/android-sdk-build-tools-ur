@@ -91,6 +91,13 @@ arch=(
   'armv7l'
 )
 url="https://developer.android.com/studio/releases/build-tools"
+# Android SDK is proprietary
+# so while The Martian Company can
+# publish a CI-compatible repository,
+# no binary packages can be distributed,
+# except than for some of the open-source components,
+# some of which are included as a split
+# package and distributed.
 license=(
   'custom'
 )
@@ -186,7 +193,10 @@ if [[ "${_os}" == "Android" ]]; then
   # you give out your work for free
   # to american corporations while you get
   # to live with paper money from
-  # your nation state instead.
+  # your nation state instead, like
+  # almost everybody who writes free
+  # software and does not work for
+  # an american corporation.
   _gtest="googletest"
 fi
 makedepends+=(
@@ -319,5 +329,7 @@ package() {
 }
 
 package_aapt2() {
-
+  ln \
+    -s
+  true
 }
