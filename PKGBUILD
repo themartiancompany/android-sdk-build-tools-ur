@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0
 
 #    ----------------------------------------------------------------------
-#    Copyright © 2024, 2025  Pellegrino Prevete
+#    Copyright © 2024, 2025, 2026  Pellegrino Prevete
 #
 #    All rights reserved
 #    ----------------------------------------------------------------------
@@ -19,39 +19,65 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# Maintainer: Truocolo <truocolo@aol.com>
-# Maintainer: Truocolo <truocolo@0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b>
-# Maintainer: Pellegrino Prevete (tallero) <pellegrinoprevete@gmail.com>
-# Maintainer: Pellegrino Prevete (dvorak) <dvorak@0x87003Bd6C074C713783df04f36517451fF34CBEf>
-# Maintainer: Amin Vakil <info AT aminvakil DOT com>
-# Contributor: xgdgsc <xgdgsc @t gmail dot com>
-# Contributor: mynacol <dc07d át mynacol dót xyz>
+# Maintainers:
+#   Truocolo
+#     <truocolo@aol.com>
+#     <truocolo@0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b>
+#   Pellegrino Prevete
+#     <pellegrinoprevete@gmail.com>
+#     <dvorak@0x87003Bd6C074C713783df04f36517451fF34CBEf>
+# Contributors:
+#   Amin Vakil
+#     <info AT aminvakil DOT com>
+#   xgdgsc
+#     <xgdgsc @t gmail dot com>
+#   mynacol
+#     <dc07d át mynacol dót xyz>
 
-_os="$( \
+_os="$(
   uname \
     -o)"
 if [[ "${_os}" == "Android" ]]; then
+  _compiler="clang"
+  _libcompiler="libc++"
   _libc="ndk-sysroot"
 elif [[ "${_os}" == "Android" ]]; then
+  _compiler="gcc"
   _libc="gcc-libs"
+  _libcompiler="libgcc"
 fi
-pkgname=android-sdk-build-tools
-# _ver="$( \
+_sdk=android-sdk
+pkgname="${_sdk}-build-tools"
+# _ver="$(
 #   cat \
 #     "${srcdir}/$_android/source.properties" | \
 #     grep \
 #       ^Pkg.Revision= | \
 #       sed \
 #         's/Pkg.Revision=\([0-9.]*\).*/\1/')"
-_major=34
-_minor=0
-_micro=0
-_ver=34.0.0
-_displayversion=34
+if [[ "${_os}" == "GNU/Linux" ]]; then
+  _major=34
+  _minor=0
+  _micro=0
+  _mini=0
+  _android_ver=android-14
+  _displayversion=34
+elif [[ "${_os}" == "GNU/Linux" ]]; then
+  _major=16
+  _minor=0
+  _micro=0
+  _mini=4
+  _android_ver=android-14
+  _displayversion=34
+fi
+_ver="${_major}.${_minor}.${_micro}"
+if [[ "${_mini}" != "" ]]; then
+  _ver="${_ver}.${_mini}"
+fi
+_android="android-${_android_ver}"
+_ver="${_major}.${_minor}.${_micro}"
 pkgver=r34.0.0
 pkgrel=2
-_sdk=android-sdk
-_android=android-14
 _pkgdesc=(
   'Build-Tools for Google Android SDK'
   '(aapt, aidl, dexdump, dx, llvm-rs-cc)'
@@ -70,12 +96,14 @@ license=(
 )
 depends=(
   "${_libc}"
+  "${_libcompiler}"
   'bash'
   "fmt"
   'zlib'
   "zopfli"
 )
 makedepends=(
+  "${_compiler}"
   "googletest"
   "protobuf"
 )
@@ -149,6 +177,16 @@ if [[ "${_os}" == "Android" ]]; then
   # started talking about how it doesn't make
   # any sense to give work out for free to 
   # people who use it to starve you.
+  # Please think about it many times
+  # before joining and contributing to
+  # Android, Arch, Debian, Fedora,
+  # Termux, Ubuntu and all those others,
+  # because you're just empowering a bunch
+  # of guys who will tell you it's okay
+  # you give out your work for free
+  # to american corporations while you get
+  # to live with paper money from
+  # your nation state instead.
   _gtest="googletest"
 fi
 makedepends+=(
@@ -187,17 +225,17 @@ _root_get() {
     _env \
     _root \
     _usr
-  _env="$( \
+  _env="$(
     command \
       -v \
       "env")"
-  _bin="$( \
+  _bin="$(
     dirname \
       "${_env}")"
-  _usr="$( \
+  _usr="$(
     dirname \
       "${_bin}")"
-  _root="$( \
+  _root="$(
     dirname \
       "${_usr}")"
   if [[ "${_root}" == "/" ]]; then
@@ -213,7 +251,7 @@ package() {
     _f \
     _target \
     _root
-  _root="$( \
+  _root="$(
     _root_get)"
   cd \
     "${pkgdir}"
